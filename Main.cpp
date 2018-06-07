@@ -14,6 +14,7 @@
 using namespace std;
 
 struct Vertex* lookUp(vector<Vertex*>, char*);
+int path(vector<Vertex*> graph, int x[20][20], struct Vertex* start, struct Vertex* end);
 
 struct Vertex{
      char* label;
@@ -36,7 +37,7 @@ int main(){
           graph.push_back(NULL);
      }
      while(going){
-          cout << "Enter V to add vertex, E to add edge, R to remove vertex, A to remove edge, F to find shortest weighted path, P to print adjacency matrix, and N to quit." << endl;
+          cout << "Enter V to add vertex, E to add edge, R to remove edge, A to remove vertex, F to find shortest weighted path, P to print adjacency matrix, and N to quit." << endl;
           cout << ": ";
           input = new char[80];
           cin >> input;
@@ -63,7 +64,7 @@ int main(){
                vertex->label = new char[80];
                strcpy(vertex->label, input_1);
                vertex->index = find;
-               vertex->solve = 0;
+               vertex->solved = 0;
                graph.at(find) = vertex;
                x[find][find] = -1;
                delete[] input_1;
@@ -108,7 +109,6 @@ int main(){
                }
                x[start->index][end->index] = 0;
                delete[] input_1;
-               delete[] input_2;
           }
           //Add an edge with a numerical value into the graph
           else if(strcmp(input, "E") == 0){
@@ -165,8 +165,8 @@ int main(){
                     continue;
                }
                cout << path(graph, x, start, end) << endl;
-               delete input_1;
-               delete input_2;
+               delete[] input_1;
+               delete[] input_2;
           }
           else if(strcmp(input, "P") == 0){
                //Honestly its easiest to just do the for loop without a function dedicated
@@ -197,31 +197,37 @@ int path(vector<Vertex*> graph, int x[20][20], struct Vertex* start, struct Vert
      vector<Vertex*> q;
      //Loop through the vector and set all of the indexes to -1 to represent infinity
      for(int i = 0; i < 20; i++){
-          if(strcmp(start->label, graph.at(i)->label) != 0){
+          if(graph.at(i) != NULL && strcmp(start->label, graph.at(i)->label) != 0){
                graph.at(i)->solved = 99999;
           }
-          vector.push_back(graph.at(i));
+          q.push_back(graph.at(i));
      }
      
      while(q.size() != 0){
           //Find v with the minimum distance from the source
           Vertex* v;
-          int min = 9999999999;
+          int min = 9999999;
           int minInd;
           for(int i = 0; i < 20; i++){
                if(q.at(i) == NULL){
-                       break;
+                    break;
                }
-               else if(min < q.at(i)->solved){
+               else if(q.at(i) == q.back()){
+                    break;
+               }
+               else if(min > q.at(i)->solved){
                     min = q.at(i)->solved;
                     v = q.at(i);
                     minInd = i;
                }
           }
-          q.erase(minInd);
+          q.erase(q.begin() + minInd);
           //Find all of the adjacent nodes and see if there is a shorter path
           for(int i = 0; i < 20; i++){
                if(q.at(i) == NULL){
+                    break;
+               }
+               else if(q.at(i) == q.back()){
                     break;
                }
                else if(x[v->index][q.at(i)->index]){
@@ -232,12 +238,5 @@ int path(vector<Vertex*> graph, int x[20][20], struct Vertex* start, struct Vert
                }
           }
      }
-     int distance = end->solved;
-     //Loop through the whole vector and set all of the solves back to zero
-     for(int i = 0; i < 20; i++){
-          if(graph.at(i) != NULL){
-               graph.at(i)->solved = 0;
-          }
-     }
-     return distance;
+     return end->solved;
 }
