@@ -20,6 +20,7 @@ struct Vertex{
      char* label;
      int index;
      int solved;
+     Vertex* previous;
 };
 
 int main(){
@@ -223,20 +224,33 @@ int path(vector<Vertex*> graph, int x[20][20], struct Vertex* start, struct Vert
           }
           q.erase(q.begin() + minInd);
           //Find all of the adjacent nodes and see if there is a shorter path
-          for(int i = 0; i < 20; i++){
-               if(q.at(i) == NULL){
-                    break;
-               }
-               else if(q.at(i) == q.back()){
-                    break;
-               }
-               else if(x[v->index][q.at(i)->index]){
-                    int distance = v->solved + x[v->index][q.at(i)->index];
-                    if(distance < q.at(i)->solved){
-                         q.at(i)->solved = distance;
-                    }
-               }
+          if(q.size() != 0){
+                  for(int i = 0; i < 20; i++){
+                       if(q.at(i) == NULL){
+                            break;
+                       }
+                       else if(q.at(i) == q.back()){
+                            break;
+                       }
+                       else if(x[v->index][q.at(i)->index]){
+                            int distance = v->solved + x[v->index][q.at(i)->index];
+                            if(distance < q.at(i)->solved){
+                                 q.at(i)->solved = distance;
+                                 q.at(i)->previous = v;
+                            }
+                       }
+                  }
           }
+     }
+     //Print out all of the elements on the path
+     Vertex* current = end;
+     if(end->solved == -1){
+          cout << "There is no path" << endl;
+          return 0;
+     }
+     while(current != NULL){
+          cout << current->label << "<-";
+          current = current->previous;
      }
      return end->solved;
 }
