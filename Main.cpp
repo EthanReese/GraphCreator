@@ -146,8 +146,27 @@ int main(){
                return 0;
           }
           //Find the shortest weighted path using djitsktra's algorithm
-          else if(strcmp(input, "F") == 0){
-               
+          else if(strcmp(input, "F") == 0){ 
+               char* input_1 = new char[80];
+               char* input_2 = new char[80];
+               //Get the node names and find the struct from the lookup function
+               cout << "Starting Node Name: " << endl;
+               cin >> input_1;
+               Vertex* start = lookUp(graph, input_1);
+               if(start == NULL){
+                    cout << "That is not a valid node name" << endl;
+                    continue;
+               }
+               cout << "Ending Node Name: " << endl;
+               cin >> input_2;
+               Vertex* end = lookUp(graph, input_2);
+               if(end == NULL){
+                    cout << "That is not a valid node name" << endl;
+                    continue;
+               }
+               cout << path(graph, x, start, end) << endl;
+               delete input_1;
+               delete input_2;
           }
           else if(strcmp(input, "P") == 0){
                //Honestly its easiest to just do the for loop without a function dedicated
