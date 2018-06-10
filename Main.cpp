@@ -86,7 +86,8 @@ int main(){
                     x[start->index][i] = 0;
                     x[i][start->index] = 0;
                }
-               graph.at(start->index) = NULL;
+               graph.erase(graph.begin() + start->index);
+               graph.push_back(NULL);
                delete start;
           }
           //Remove a link
@@ -203,7 +204,6 @@ int path(vector<Vertex*> graph, int x[20][20], struct Vertex* start, struct Vert
           }
           q.push_back(graph.at(i));
      }
-     
      while(q.size() != 0){
           //Find v with the minimum distance from the source
           Vertex* v;
@@ -244,7 +244,7 @@ int path(vector<Vertex*> graph, int x[20][20], struct Vertex* start, struct Vert
      }
      //Print out all of the elements on the path
      Vertex* current = end;
-     if(end->solved == -1){
+     if(end->solved == 99999){
           cout << "There is no path" << endl;
           return 0;
      }
